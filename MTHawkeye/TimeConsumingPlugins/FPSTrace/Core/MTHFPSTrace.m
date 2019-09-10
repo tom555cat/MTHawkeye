@@ -40,10 +40,11 @@
 @property (nonatomic, strong) NSHashTable<id<MTHFPSTraceDelegate>> *delegates;
 
 @property (nonatomic, strong) NSArray<NSValue *> *renderInfos;
-@property (nonatomic, strong) NSHashTable *gpuImageRenderWeakTable;
+@property (atomic, copy, readwrite) NSHashTable *gpuImageRenderWeakTable;
 @end
 
 @implementation MTHFPSTrace
+@synthesize gpuImageRenderWeakTable = _gpuImageRenderWeakTable;
 
 - (void)dealloc {
     [_displayLink invalidate];
@@ -194,27 +195,38 @@
 
 #pragma mark -GLES FPS Tick
 - (void)glesRenderer:(id)reciver start:(BOOL)start {
-    __block NSValue *surpportedRenderer = nil;
-    [self.renderInfos enumerateObjectsUsingBlock:^(NSValue *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+    if (reciver == nil) {
+        return;
+    }
+    __strong typeof(reciver) strongReciver = reciver;
+
+    NSValue *surpportedRenderer = nil;
+    for (NSValue *obj in self.renderInfos) {
         MTHFPSGLRenderInfo renderInfo;
         [obj getValue:&renderInfo];
-        if ([reciver isKindOfClass:renderInfo.rendererClass]) {
-            MTHFPSGLRenderCounter *counter = [self getDynamicAttachGLESCounter:reciver];
+        if ([strongReciver isKindOfClass:renderInfo.rendererClass]) {
+            MTHFPSGLRenderCounter *counter = [self getDynamicAttachGLESCounter:strongReciver];
             counter.isStartRender = start;
             surpportedRenderer = obj;
 
             if ([NSStringFromClass(renderInfo.rendererClass) isEqualToString:@"GPUImageView"] ||
                 [NSStringFromClass(renderInfo.rendererClass) isEqualToString:@"MTCameraGPUImageView"]) {
-                if (![self.gpuImageRenderWeakTable.allObjects containsObject:reciver]) {
-                    [self.gpuImageRenderWeakTable addObject:reciver];
+                @synchronized(self) {
+                    if (![self.gpuImageRenderWeakTable containsObject:strongReciver]) {
+                        [self.gpuImageRenderWeakTable addObject:strongReciver];
+                    }
                 }
             }
-            *stop = YES;
+            break;
         }
-    }];
+    }
 
+    NSArray *renderers = nil;
+    @synchronized(self) {
+        renderers = [self.gpuImageRenderWeakTable.allObjects copy];
+    }
     BOOL isGPUImageViewDisplaying = NO;
-    for (id renderer in self.gpuImageRenderWeakTable.allObjects) {
+    for (id renderer in renderers) {
         MTHFPSGLRenderCounter *counter = [self getDynamicAttachGLESCounter:renderer];
         if (counter.isStartRender) {
             isGPUImageViewDisplaying = YES;
@@ -229,10 +241,9 @@
 
     for (id<MTHFPSTraceDelegate> delegate in self.delegates) {
         if (delegate && [delegate respondsToSelector:@selector(glesRenderer:fpsValueChanged:)]) {
-            __weak typeof(reciver) weakReciver = reciver;
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [delegate glesRenderer:weakReciver displayStart:start];
+                    [delegate glesRenderer:strongReciver displayStart:start];
                 });
             });
         }
@@ -240,15 +251,20 @@
 }
 
 - (void)glesRenderProcess:(id)reciver {
-    __block NSValue *surpportedRenderer = nil;
-    [self.renderInfos enumerateObjectsUsingBlock:^(NSValue *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+    if (reciver == nil) {
+        return;
+    }
+    __strong typeof(reciver) strongReciver = reciver;
+
+    NSValue *surpportedRenderer = nil;
+    for (NSValue *obj in self.renderInfos) {
         MTHFPSGLRenderInfo renderInfo;
         [obj getValue:&renderInfo];
-        if ([reciver isKindOfClass:renderInfo.rendererClass]) {
+        if ([strongReciver isKindOfClass:renderInfo.rendererClass]) {
             surpportedRenderer = obj;
-            *stop = YES;
+            break;
         }
-    }];
+    }
 
     if (!surpportedRenderer) {
         return;
@@ -284,11 +300,10 @@
         NSInteger newGPUImageFPS = (NSInteger)round(counter.renderCount * 1000.f / differMs);
         if (newGPUImageFPS != self.gpuImageFPSValue) {
             for (id<MTHFPSTraceDelegate> delegate in self.delegates) {
-                __weak typeof(reciver) weakReciver = reciver;
                 if (delegate && [delegate respondsToSelector:@selector(glesRenderer:fpsValueChanged:)]) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            [delegate glesRenderer:weakReciver fpsValueChanged:newGPUImageFPS];
+                            [delegate glesRenderer:strongReciver fpsValueChanged:newGPUImageFPS];
                         });
                     });
                 }
@@ -344,11 +359,21 @@ void mthf_glesCounterSetter(id object, SEL _cmd1, id newValue) {
 }
 
 #pragma mark - Getter
-- (NSHashTable *)gpuImageRenderWeakTable {
-    if (!_gpuImageRenderWeakTable) {
-        _gpuImageRenderWeakTable = [NSHashTable weakObjectsHashTable];
+- (void)setGpuImageRenderWeakTable:(NSHashTable *)gpuImageRenderWeakTable {
+    @synchronized(self) {
+        if (_gpuImageRenderWeakTable != gpuImageRenderWeakTable) {
+            _gpuImageRenderWeakTable = gpuImageRenderWeakTable;
+        }
     }
-    return _gpuImageRenderWeakTable;
+}
+
+- (NSHashTable *)gpuImageRenderWeakTable {
+    @synchronized(self) {
+        if (_gpuImageRenderWeakTable == nil) {
+            _gpuImageRenderWeakTable = [NSHashTable weakObjectsHashTable];
+        }
+        return _gpuImageRenderWeakTable;
+    }
 }
 
 - (NSHashTable<id<MTHFPSTraceDelegate>> *)delegates {
