@@ -15,7 +15,7 @@
 #import "XCMonitorLogModel.h"
 
 #define TABLE_MONITOR_LOG       @"XCMonitorLog"
-#define SQL_CREATE_MONITORLOG      [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (logID integer, logContent text, logType integer, primary key (logID))", TABLE_MONITOR_LOG]
+#define SQL_CREATE_MONITORLOG      [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (logID integer, logTitle text, logContent text, logType integer, primary key (logID))", TABLE_MONITOR_LOG]
 
 //#define SQL_CREATE_MONITORLOG_INDEX [NSString stringWithFormat:@"CREATE INDEX logIDIndex on %@(logID)", SQL_CREATE_MONITORLOG]
 
@@ -107,9 +107,9 @@
         @try {
             [logArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 XCMonitorLogModel *logModel = (XCMonitorLogModel *)obj;
-                NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ VALUES(?,?,?)", TABLE_MONITOR_LOG];
+                NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ VALUES(?,?,?,?)", TABLE_MONITOR_LOG];
                 
-                BOOL result = [self.database executeUpdate:sql, @(logModel.logID), logModel.logContent, @(logModel.logType)];
+                BOOL result = [self.database executeUpdate:sql, @(logModel.logID), logModel.logTitle, logModel.logContent, @(logModel.logType)];
                 
                 if (!result) {
                     isRollBack = YES;
@@ -119,12 +119,14 @@
         } @catch (NSException *exception) {
             [self.database rollback];
             if (failure) {
+#warning 发生异常进行失败回调，测试
                 failure(@"插入数据失败");
             }
         } @finally {
             if (isRollBack) {
                 [self.database rollback];
                 NSLog(@"insert to database failure content");
+#warning 发生回滚进行失败回调，测试
                 failure(@"插入数据失败");
             } else {
                 [self.database commit];

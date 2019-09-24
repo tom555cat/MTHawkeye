@@ -23,6 +23,7 @@ typedef NS_ENUM(NSUInteger, XCMonitorLogType) {
 @interface XCMonitorLogModel : NSObject
 
 @property (nonatomic, assign) NSUInteger logID;
+@property (nonatomic, copy) NSString *logTitle;
 @property (nonatomic, copy) NSString *logContent;
 @property (nonatomic, assign) XCMonitorLogType logType;
 
