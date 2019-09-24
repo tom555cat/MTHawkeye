@@ -23,6 +23,9 @@ PODS:
   - FBRetainCycleDetector (0.1.4)
   - fishhook (0.2)
   - FLEX (3.0.0)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
   - GYHttpMock (1.0.1)
   - MTAppenderFile (0.4.3)
   - MTGLDebug (3.1.1):
@@ -44,6 +47,7 @@ PODS:
     - MTHawkeye/Core
     - MTHawkeye/StackBacktrace
   - MTHawkeye/Core (0.12.1):
+    - FMDB (~> 2.7.4)
     - MTHawkeye/Utils
   - MTHawkeye/DefaultPlugins (0.12.1):
     - CocoaLumberjack
@@ -247,6 +251,7 @@ SPEC REPOS:
     - FBRetainCycleDetector
     - fishhook
     - FLEX
+    - FMDB
     - GYHttpMock
     - MTAppenderFile
     - MTGLDebug
@@ -262,11 +267,12 @@ SPEC CHECKSUMS:
   FBRetainCycleDetector: 46f8179bbb1c587deee3ea838a1a3ee02acf5015
   fishhook: ea19933abfe8f2f52c55fd8b6e2718467d3ebc89
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GYHttpMock: ad08e55ce8bde4e7f7b4d0cbc79ff23c1311658b
   MTAppenderFile: c7db8f33a8140ee2275a6200305fd11e609fae33
   MTGLDebug: a65833811c1e8b84b2100dfb6b41c29c029254d6
-  MTHawkeye: 8dee0d747bf7921709150f0bc63e42c7daed04a5
+  MTHawkeye: 29a48bace812f252fbebfe25e2c0ec73e47bb9cc
 
 PODFILE CHECKSUM: d38354cf1ef618c2dd09b7228bb0c995f7d7c949
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.6.1

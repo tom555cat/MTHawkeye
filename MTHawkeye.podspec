@@ -65,6 +65,7 @@ Pod::Spec.new do |s|
     sp.public_header_files = 'MTHawkeye/Core/**/*.{h}'
     sp.source_files = 'MTHawkeye/Core/**/*.{h,m}'
     sp.dependency 'MTHawkeye/Utils'
+    sp.dependency 'FMDB', '~> 2.7.4'
   end
 
   s.subspec 'UISkeleton' do |ui|
