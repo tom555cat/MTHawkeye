@@ -24,6 +24,7 @@ typedef NS_ENUM(NSUInteger, XCMonitorLogType) {
 
 @property (nonatomic, assign) NSUInteger logID;
 @property (nonatomic, copy) NSString *logTitle;
+@property (nonatomic, assign) NSTimeInterval logTime;
 @property (nonatomic, copy) NSString *logContent;
 @property (nonatomic, assign) XCMonitorLogType logType;
 
