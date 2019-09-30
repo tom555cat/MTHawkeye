@@ -64,6 +64,8 @@ PODS:
     - MTHawkeye/StorageMonitorPlugins
     - MTHawkeye/TimeConsumingPlugins
     - MTHawkeye/UISkeleton
+    - MTHawkeye/XCActionTracePlugins
+    - MTHawkeye/XCUI
   - MTHawkeye/EnergyPlugins (0.12.1):
     - MTHawkeye/EnergyPlugins/CPUTrace (= 0.12.1)
   - MTHawkeye/EnergyPlugins/CPUTrace (0.12.1):
@@ -229,6 +231,11 @@ PODS:
     - MTHawkeye/Utils/cpp (= 0.12.1)
   - MTHawkeye/Utils/cpp (0.12.1):
     - MTAppenderFile
+  - MTHawkeye/XCActionTracePlugins (0.12.1):
+    - MTHawkeye/Core
+  - MTHawkeye/XCUI (0.12.1):
+    - MTHawkeye/Core
+    - MTHawkeye/NetworkPlugins
 
 DEPENDENCIES:
   - AFNetworking
@@ -271,7 +278,7 @@ SPEC CHECKSUMS:
   GYHttpMock: ad08e55ce8bde4e7f7b4d0cbc79ff23c1311658b
   MTAppenderFile: c7db8f33a8140ee2275a6200305fd11e609fae33
   MTGLDebug: a65833811c1e8b84b2100dfb6b41c29c029254d6
-  MTHawkeye: 29a48bace812f252fbebfe25e2c0ec73e47bb9cc
+  MTHawkeye: be3fd883e3a2853d0f2e021a5c530f9f3b820eac
 
 PODFILE CHECKSUM: d38354cf1ef618c2dd09b7228bb0c995f7d7c949
 

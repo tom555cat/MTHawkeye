@@ -57,6 +57,8 @@ Pod::Spec.new do |s|
     sp.dependency 'MTHawkeye/StorageMonitorPlugins'
 
     sp.dependency 'MTHawkeye/FLEXExtension'
+    sp.dependency 'MTHawkeye/XCActionTracePlugins'
+    sp.dependency 'MTHawkeye/XCUI'
 
   end
 
@@ -408,6 +410,21 @@ Pod::Spec.new do |s|
     end
   end
 
+  # ――― XCActionTracePlugins  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.subspec 'XCActionTracePlugins' do |xcat|
+    xcat.public_header_files = 'MTHawkeye/XCActionTracePlugins/*.{h}'
+    xcat.source_files = 'MTHawkeye/XCActionTracePlugins/*.{h,m}'
+    xcat.dependency 'MTHawkeye/Core'
+  end # XCActionTracePlugins
+  
+  # ――― XCUI  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  s.subspec 'XCUI' do |xcui|
+    xcui.public_header_files = 'MTHawkeye/XCUI/*.{h}'
+    xcui.source_files = 'MTHawkeye/XCUI/*.{h,m}'
+    xcui.dependency 'MTHawkeye/Core'
+    xcui.dependency 'MTHawkeye/NetworkPlugins'
+  end # XCUI
+  
   s.requires_arc = true
 
 end

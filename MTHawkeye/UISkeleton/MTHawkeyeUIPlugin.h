@@ -25,7 +25,7 @@ extern NSString *const kMTHawkeyeUIGroupNetwork;       /**< Network group */
 extern NSString *const kMTHawkeyeUIGroupGraphics;      /**< Graphics group */
 extern NSString *const kMTHawkeyeUIGroupStorage;       /**< Storage group */
 extern NSString *const kMTHawkeyeUIGroupUtility;       /**< Utility group */
-
+extern NSString *const kXCUINetworkAndEvent;           /**< Network & Event */
 
 /****************************************************************************/
 #pragma mark - Setting UI Plugin

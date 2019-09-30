@@ -66,7 +66,7 @@ static dispatch_group_t monitor_database_completion_group() {
     self.databaseQueue = [FMDatabaseQueue databaseQueueWithPath:[self makeDBFilePath]];
     self.database = [FMDatabase databaseWithPath:[self makeDBFilePath]];
     if (![self.database open]) {
-        NSLog(@"打开数据库失败!");
+        NSLog(@"打开数据库失败❌!");
     } else {
         // 清理数据库预留(某种情况下可能需要)
         
@@ -101,7 +101,9 @@ static dispatch_group_t monitor_database_completion_group() {
     if (![[NSFileManager defaultManager] fileExistsAtPath:logDirectory]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:logDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
     }
-    return logDirectory;
+    
+    NSString *dbPath = [logDirectory stringByAppendingPathComponent:@"fmdb_file"];
+    return dbPath;
 }
 
 #pragma mark 日志增查
@@ -118,9 +120,9 @@ static dispatch_group_t monitor_database_completion_group() {
             [logArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 XCMonitorLogModel *logModel = (XCMonitorLogModel *)obj;
                 //(logID integer, logTitle text, logTime real, logContent text, logType integer
-                NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ VALUES(?,?,?,?,?)", TABLE_MONITOR_LOG];
+                NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@ (logTitle, logContent, logType, logTime) VALUES (?,?,?,?)", TABLE_MONITOR_LOG];
 #warning 测试字符串为nil是否会闪退
-                BOOL result = [self.database executeUpdate:sql, @(logModel.logID), logModel.logTitle, logModel.logContent, @(logModel.logType), @(logModel.logTime)];
+                BOOL result = [self.database executeUpdate:sql, logModel.logTitle, logModel.logContent, @(logModel.logType), @(logModel.logTime)];
                 
                 if (!result) {
                     isRollBack = YES;
@@ -177,7 +179,7 @@ static dispatch_group_t monitor_database_completion_group() {
 
 - (void)loadMonitorLogPageCount:(NSInteger)pageCount
                           index:(NSInteger)index
-              completionHandler:(void (^)(NSArray * _Nonnull, NSError * _Nullable))completionHandler {
+              completionHandler:(void (^)(NSArray<XCMonitorLogModel *> * _Nonnull, NSError * _Nullable))completionHandler {
     __weak typeof(self) weakSelf = self;
     [self.databaseQueue inDatabase:^(FMDatabase * _Nonnull db) {
         __strong typeof(weakSelf) self = weakSelf;

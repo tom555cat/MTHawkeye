@@ -39,6 +39,7 @@ NSString *const kMTHawkeyeUIGroupNetwork = @"Network";
 NSString *const kMTHawkeyeUIGroupGraphics = @"Graphics";
 NSString *const kMTHawkeyeUIGroupStorage = @"Storage";
 NSString *const kMTHawkeyeUIGroupUtility = @"Utility";
+NSString *const kXCUINetworkAndEvent = @"XCMonitor";
 
 
 const NSString *kMTHFloatingWidgetRaiseWarningParamsKeepDurationKey = @"keep-duration";

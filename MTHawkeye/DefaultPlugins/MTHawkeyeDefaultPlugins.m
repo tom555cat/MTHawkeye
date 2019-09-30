@@ -56,6 +56,10 @@
 
 #import <MTHawkeye/FLEXHawkeyePlugin.h>
 
+#import "XCNetworkAndEventTraceUI.h"
+#import "XCNetworkMonitorDatabaseAdaptor.h"
+#import "XCActionTraceDatabaseAdaptor.h"
+
 
 @interface MTHawkeyeDefaultPlugins ()
 
@@ -211,6 +215,8 @@ static NSMutableArray<id<MTHawkeyeFloatingWidgetPlugin>> *defaultdefaultFloating
     // network
     [defaultClientPlugins addObject:[MTHNetworkMonitorHawkeyeAdaptor new]];
     [defaultClientPlugins addObject:[MTHNetworkInspectHawkeyeAdaptor new]];
+    /// 增加写入数据库适配器
+    [defaultClientPlugins addObject:[XCNetworkMonitorDatabaseAdaptor new]];
 
 #ifdef MTH_INCLUDE_GLTRACE
     // graphics
@@ -219,6 +225,9 @@ static NSMutableArray<id<MTHawkeyeFloatingWidgetPlugin>> *defaultdefaultFloating
 
     // storage
     [defaultClientPlugins addObject:[MTHDirectoryWatcherHawkeyeAdaptor new]];
+    
+    // action
+    [defaultClientPlugins addObject:[XCActionTraceDatabaseAdaptor new]];
 }
 
 + (void)setupDefaultUIPlugins {
@@ -266,6 +275,9 @@ static NSMutableArray<id<MTHawkeyeFloatingWidgetPlugin>> *defaultdefaultFloating
     MTHDirectoryWatcherHawkeyeUI *dirWatcherUI = [[MTHDirectoryWatcherHawkeyeUI alloc] init];
     [defaultMainPanelPlugins addObject:dirWatcherUI];
     [defaultdefaultSettingUIPluginsInto addObject:dirWatcherUI];
+    
+    XCNetworkAndEventTraceUI *networkAndEventUI = [[XCNetworkAndEventTraceUI alloc] init];
+    [defaultMainPanelPlugins addObject:networkAndEventUI];
 
     [defaultMainPanelPlugins addObject:[FLEXHawkeyePlugin new]];
 }

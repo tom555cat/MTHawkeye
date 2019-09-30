@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XCMonitorDatabase : NSObject
 
++ (instancetype)shared;
+
 ///-----------------------------
 /// @name 处理回调的队列
 ///-----------------------------
@@ -38,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)loadMonitorLogPageCount:(NSInteger)pageCount
                           index:(NSInteger)index
-              completionHandler:(nullable void(^)(NSArray *logArray, NSError * _Nullable error))completionHandler;
+              completionHandler:(nullable void(^)(NSArray<XCMonitorLogModel *> *logArray, NSError * _Nullable error))completionHandler;
 @end
 
 ///-----------------------------
