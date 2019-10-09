@@ -61,6 +61,7 @@
 }
 
 - (void)loadTransactionsWithInspectComoletion:(void (^)(void))inspectCompetion {
+    // 返回网络记录已经按照requestIndex排序，序号大的排在前边
     NSArray<MTHNetworkTransaction *> *trans = [[MTHNetworkRecordsStorage shared] readNetworkTransactions];
     [self setNetworkTransactions:trans];
 
@@ -170,6 +171,8 @@
 
     NSMutableArray *onViewIndexArray = [NSMutableArray array];
 
+    // 该方法拿到的是requestIndex，然后通过requestIndex转化为networkTransactions数组中的位置，即viewIndex;
+    // 然后通过viewIndex从networkTransactions中获取到具体的transaction。
     self.requestIndexFocusOnCurrently = requestIndex;
     NSInteger viewIndex = [self viewIndexFromRequestIndex:requestIndex];
     if (viewIndex < 0 || viewIndex >= self.networkTransactions.count) {
@@ -179,14 +182,17 @@
     MTHNetworkTransaction *focusOnTrans = self.networkTransactions[viewIndex];
     NSTimeInterval focusOnTransStartTime = [focusOnTrans.startTime timeIntervalSince1970];
     NSTimeInterval focusOnTransEndTime = focusOnTransStartTime + focusOnTrans.duration;
+    // 从前一个网络请求，开始往前倒
     for (NSInteger i = viewIndex + 1; i < self.networkTransactions.count; ++i) {
         MTHNetworkTransaction *item = self.networkTransactions[i];
         NSTimeInterval start = [item.startTime timeIntervalSince1970];
         NSTimeInterval end = start + item.duration;
         if (end > focusOnTransStartTime) {
+            // 如果前一个(或者前前一个)网络请求的结束时间超过了当前网络请求的开始时间，则将这个网络请求的requestIndex插入到一个数组中。
             [onViewIndexArray insertObject:@(item.requestIndex) atIndex:0];
         } else if (item.duration < DBL_EPSILON) {
             // 未完成的请求
+            // 如果网络请求未完成，也将其requestIndex加入到数组中
             if (item.transactionState != MTHNetworkTransactionStateFailed && item.transactionState != MTHNetworkTransactionStateFinished) {
                 [onViewIndexArray insertObject:@(item.requestIndex) atIndex:0];
             }
