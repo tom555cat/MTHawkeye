@@ -19,6 +19,8 @@
 #define MTHawkeyeNetworkDebugEnabled 0
 #endif
 
+@class XCMonitorLogModel;
+
 typedef NS_ENUM(NSInteger, MTHNetworkTransactionState) {
     MTHNetworkTransactionStateUnstarted,
     MTHNetworkTransactionStateAwaitingResponse,
@@ -140,6 +142,7 @@ typedef NS_ENUM(NSInteger, MTHNetworkTransactionStatusCode) {
 
 + (NSString *)readableStringFromTransactionState:(MTHNetworkTransactionState)state;
 
++ (instancetype)transactionFromXCLogModel:(XCMonitorLogModel *)logModel;
 
 /**
  生成包含 transaction 中关键 property 的 dictionary。

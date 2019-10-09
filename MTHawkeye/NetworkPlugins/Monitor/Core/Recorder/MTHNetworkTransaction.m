@@ -12,6 +12,7 @@
 
 #import "MTHNetworkTransaction.h"
 #import "NSData+MTHawkeyeNetwork.h"
+#import "XCMonitorLogModel.h"
 
 #import <dlfcn.h>
 
@@ -436,6 +437,24 @@ typedef CFHTTPMessageRef (*MTHURLResponseGetHTTPResponse)(CFURLRef response);
     }
 
     return dict.copy;
+}
+
++ (instancetype)transactionFromXCLogModel:(XCMonitorLogModel *)logModel {
+    if (!logModel) {
+        return nil;
+    }
+    
+    NSData *data = [logModel.logContent dataUsingEncoding:NSUTF8StringEncoding];
+    if (!data) {
+        return nil;
+    }
+    
+    NSDictionary *transactionDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    if (!transactionDict || !transactionDict.count) {
+        return nil;
+    }
+    MTHNetworkTransaction *transaction = [MTHNetworkTransaction transactionFromPropertyDictionary:transactionDict];
+    return transaction;
 }
 
 @end
