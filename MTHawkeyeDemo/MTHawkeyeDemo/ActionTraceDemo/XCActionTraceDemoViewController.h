@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XCActionTraceViewController : UIViewController
+@interface XCActionTraceDemoViewController : UIViewController
 
 @end
 

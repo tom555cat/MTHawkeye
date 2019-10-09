@@ -65,8 +65,10 @@
 		26005FF0B1C6CE95CDBD3885 /* libPods-MTHawkeyeDemo-MTHawkeyeDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA4D2EF447D912F6B056F1BF /* libPods-MTHawkeyeDemo-MTHawkeyeDemoTests.a */; };
 		458D24358C1002952345328E /* libPods-MTHawkeyeDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D7747057BC1D56BFA9DF99C /* libPods-MTHawkeyeDemo.a */; };
 		64E17F8620612139004B1227 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E17F8520612139004B1227 /* libz.tbd */; };
-		8E3D6C09234199EA00FB8FC7 /* XCActionTraceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3D6C08234199EA00FB8FC7 /* XCActionTraceViewController.m */; };
-		8E3D6C0A234199EA00FB8FC7 /* XCActionTraceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3D6C08234199EA00FB8FC7 /* XCActionTraceViewController.m */; };
+		8E3D6C09234199EA00FB8FC7 /* XCActionTraceDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3D6C08234199EA00FB8FC7 /* XCActionTraceDemoViewController.m */; };
+		8E3D6C0A234199EA00FB8FC7 /* XCActionTraceDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3D6C08234199EA00FB8FC7 /* XCActionTraceDemoViewController.m */; };
+		8E3D6C2E2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E3D6C2D2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard */; };
+		8E3D6C2F2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E3D6C2D2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard */; };
 		95E412A722421D9500DAC583 /* GLESTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 95E412A622421D9500DAC583 /* GLESTool.m */; };
 		95E412AA2242432100DAC583 /* GraphicsTextureGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95E412A92242432100DAC583 /* GraphicsTextureGLKView.m */; };
 /* End PBXBuildFile section */
@@ -256,8 +258,9 @@
 		20E67149218ACEC90078DAAF /* mtha_splay_tree_test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mtha_splay_tree_test.m; sourceTree = "<group>"; };
 		64E17F8520612139004B1227 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		8C058A273E14786B71715136 /* Pods-MTHawkeyeDemo-MTHawkeyeDemoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MTHawkeyeDemo-MTHawkeyeDemoTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MTHawkeyeDemo-MTHawkeyeDemoTests/Pods-MTHawkeyeDemo-MTHawkeyeDemoTests.debug.xcconfig"; sourceTree = "<group>"; };
-		8E3D6C07234199EA00FB8FC7 /* XCActionTraceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCActionTraceViewController.h; sourceTree = "<group>"; };
-		8E3D6C08234199EA00FB8FC7 /* XCActionTraceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XCActionTraceViewController.m; sourceTree = "<group>"; };
+		8E3D6C07234199EA00FB8FC7 /* XCActionTraceDemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCActionTraceDemoViewController.h; sourceTree = "<group>"; };
+		8E3D6C08234199EA00FB8FC7 /* XCActionTraceDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XCActionTraceDemoViewController.m; sourceTree = "<group>"; };
+		8E3D6C2D2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = XCActionTraceDemo.storyboard; sourceTree = "<group>"; };
 		95E412A522421D9500DAC583 /* GLESTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLESTool.h; sourceTree = "<group>"; };
 		95E412A622421D9500DAC583 /* GLESTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLESTool.m; sourceTree = "<group>"; };
 		95E412A82242432100DAC583 /* GraphicsTextureGLKView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsTextureGLKView.h; sourceTree = "<group>"; };
@@ -359,6 +362,7 @@
 				207AFA062230C398003BE276 /* EnergyDemo.storyboard */,
 				207AFA092230C3D0003BE276 /* GraphicsDemo.storyboard */,
 				207AFA2A2230FF5E003BE276 /* ToastDemo.storyboard */,
+				8E3D6C2D2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard */,
 			);
 			name = Storyboard;
 			sourceTree = "<group>";
@@ -602,7 +606,6 @@
 		20DC168D1ECDAAD500694EB9 = {
 			isa = PBXGroup;
 			children = (
-				8E3D6C06234199C700FB8FC7 /* ActionTraceDemo */,
 				1512F4B8027AC44EFE8A07CD /* Frameworks */,
 				20DC16981ECDAAD500694EB9 /* MTHawkeyeDemo */,
 				20DC16B21ECDAAD500694EB9 /* MTHawkeyeDemoTests */,
@@ -627,6 +630,7 @@
 				203B69862240853F00537A2D /* MTHawkeyeDemo.entitlements */,
 				20DC169C1ECDAAD500694EB9 /* AppDelegate.h */,
 				20DC169D1ECDAAD500694EB9 /* AppDelegate.m */,
+				8E3D6C06234199C700FB8FC7 /* ActionTraceDemo */,
 				204C0CA42230B380005CBC46 /* EnergyDemo */,
 				204C0CA32230B37F005CBC46 /* GraphicsDemo */,
 				204BBD5D1F43DE7700A1E419 /* MemoryDemo */,
@@ -689,8 +693,8 @@
 		8E3D6C06234199C700FB8FC7 /* ActionTraceDemo */ = {
 			isa = PBXGroup;
 			children = (
-				8E3D6C07234199EA00FB8FC7 /* XCActionTraceViewController.h */,
-				8E3D6C08234199EA00FB8FC7 /* XCActionTraceViewController.m */,
+				8E3D6C07234199EA00FB8FC7 /* XCActionTraceDemoViewController.h */,
+				8E3D6C08234199EA00FB8FC7 /* XCActionTraceDemoViewController.m */,
 			);
 			path = ActionTraceDemo;
 			sourceTree = "<group>";
@@ -747,7 +751,7 @@
 					20DC16951ECDAAD500694EB9 = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = Q2K2E67T5B;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.AccessWiFi = {
 								enabled = 0;
@@ -786,6 +790,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20DC16A91ECDAAD500694EB9 /* LaunchScreen.storyboard in Resources */,
+				8E3D6C2E2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard in Resources */,
 				207AFA2C2230FF5E003BE276 /* ToastDemo.storyboard in Resources */,
 				204C0C9D222FD473005CBC46 /* MemoryDemo.storyboard in Resources */,
 				20DC16A61ECDAAD500694EB9 /* Assets.xcassets in Resources */,
@@ -804,6 +809,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E3D6C2F2341AA4600FB8FC7 /* XCActionTraceDemo.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -884,7 +890,7 @@
 				204BBD891F43DE7800A1E419 /* LeakingPropertiesTestViewController.m in Sources */,
 				204C0CA92230B3AE005CBC46 /* StorageDemoTableViewController.m in Sources */,
 				204BBD8D1F43DE7800A1E419 /* MTPhotoAssetsViewController.m in Sources */,
-				8E3D6C09234199EA00FB8FC7 /* XCActionTraceViewController.m in Sources */,
+				8E3D6C09234199EA00FB8FC7 /* XCActionTraceDemoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -895,7 +901,7 @@
 				2046108722E5A47200CB27E3 /* AFTestCase.m in Sources */,
 				20BCE4262203E048009E5CCF /* MTHawkeyeClientTests.m in Sources */,
 				205D1E4721EF205C0053735D /* MTHawkeyeUserDefaultsTests.m in Sources */,
-				8E3D6C0A234199EA00FB8FC7 /* XCActionTraceViewController.m in Sources */,
+				8E3D6C0A234199EA00FB8FC7 /* XCActionTraceDemoViewController.m in Sources */,
 				20841F7E1F3B017B002CA705 /* NetworkTransactionsFilterTests.m in Sources */,
 				203AA50C1F53A924006790E2 /* NetworkURLConnectionDelegateTests.m in Sources */,
 				20D1869A1F551C1100091A19 /* NetworkURLSessionDelegateTests.m in Sources */,
@@ -1120,8 +1126,8 @@
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = Q2K2E67T5B;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -1142,7 +1148,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.meitu.hawkeyedemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development *";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1165,8 +1171,8 @@
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = Q2K2E67T5B;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -1187,7 +1193,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.meitu.hawkeyedemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development *";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
