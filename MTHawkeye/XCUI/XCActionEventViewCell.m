@@ -12,6 +12,8 @@
 
 #import "XCActionEventViewCell.h"
 
+NSString *const XCActionEventViewCellIdentifier = @"kXCActionEventViewCellIdentifier";
+
 @implementation XCActionEventViewCell
 
 - (void)awakeFromNib {

@@ -5,7 +5,7 @@
 // This source code is licensed under the license found in the LICENSE file in
 // the root directory of this source tree.
 //
-// Created on: 2019/9/29
+// Created on: 2019/9/27
 // Created by: tongleiming
 //
 
@@ -14,9 +14,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-FOUNDATION_EXPORT NSString *const XCActionEventViewCellIdentifier;
+@interface XCMonitorViewController : UIViewController
 
-@interface XCActionEventViewCell : UITableViewCell
+- (instancetype)init;
 
 @end
 
