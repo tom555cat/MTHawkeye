@@ -17,7 +17,7 @@
 
 
 #define TABLE_MONITOR_LOG       @"XCMonitorLog"
-#define SQL_CREATE_MONITORLOG      [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (logID integer primary key AUTOINCREMENT, logTitle text, logContent text, logType integer, logTime real)", TABLE_MONITOR_LOG]
+#define SQL_CREATE_MONITORLOG      [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (logID INTEGER PRIMARY KEY, logTitle text, logContent text, logType integer, logTime real)", TABLE_MONITOR_LOG]
 
 // 如果用户没有提供completion group，则使用自定义的completion group
 static dispatch_group_t monitor_database_completion_group() {
