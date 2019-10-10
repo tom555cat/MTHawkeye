@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)storeNetworkTransaction:(MTHNetworkTransaction *)transaction;
 
-- (void)readNetworkTransactionsWithCount:(NSInteger)count sinceLogID:(NSUInteger)logID withCompletion:(void(^)(NSArray<XCMonitorLogModel *> *))completion;
+- (void)readNetworkTransactionsWithCount:(NSInteger)count index:(NSUInteger)index withCompletion:(void(^)(NSArray<XCMonitorLogModel *> *))completion;
 
 @end
 

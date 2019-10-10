@@ -52,31 +52,14 @@
     [[XCMonitorDatabase shared] insertMonitorLogs:@[logModel] completionHandler:nil];
 }
 
-- (void)readNetworkTransactionsWithCount:(NSInteger)count sinceLogID:(NSUInteger)logID withCompletion:(void(^)(NSArray<XCMonitorLogModel *> *))completion {
+- (void)readNetworkTransactionsWithCount:(NSInteger)count index:(NSUInteger)index withCompletion:(void(^)(NSArray<XCMonitorLogModel *> *))completion {
     
     __weak typeof(self) weakSelf = self;
     [[XCMonitorDatabase shared] loadMonitorLogPageCount:count
-                                                  index:logID
+                                                  index:index
                                       completionHandler:^(NSArray * _Nonnull logArray, NSError * _Nullable error) {
           __strong typeof(weakSelf) self = weakSelf;
           if (!self) return;
-          
-//          // 将LogModel转化为TransactionModel
-//          NSMutableArray *transactionArray = [NSMutableArray array];
-//          for (XCMonitorLogModel *logModel in logArray) {
-//              NSData *data = [logModel.logContent dataUsingEncoding:NSUTF8StringEncoding];
-//              if (!data) {
-//                  return;
-//              }
-//
-//              NSDictionary *transactionDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-//              if (!transactionDict || !transactionDict.count) {
-//                  return;
-//              }
-//              MTHNetworkTransaction *transaction = [MTHNetworkTransaction transactionFromPropertyDictionary:transactionDict];
-//              [transactionArray addObject:transaction];
-//          }
-          
           
           if (completion) {
               completion([logArray copy]);
