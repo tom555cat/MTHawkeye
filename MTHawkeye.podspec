@@ -423,6 +423,8 @@ Pod::Spec.new do |s|
     xcui.source_files = 'MTHawkeye/XCUI/*.{h,m}'
     xcui.dependency 'MTHawkeye/Core'
     xcui.dependency 'MTHawkeye/NetworkPlugins'
+    xcui.dependency 'MJRefresh', '~> 3.2.0'
+    xcui.dependency 'Masonry', '~> 1.1.0'
   end # XCUI
   
   s.requires_arc = true
