@@ -14,6 +14,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSTimeInterval kXCMonitorLogExpiredTime;
+
 @class XCMonitorLogModel;
 
 @interface XCMonitorDatabase : NSObject

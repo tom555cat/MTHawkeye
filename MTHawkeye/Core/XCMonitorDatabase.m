@@ -19,6 +19,9 @@
 #define TABLE_MONITOR_LOG       @"XCMonitorLog"
 #define SQL_CREATE_MONITORLOG      [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (logID INTEGER PRIMARY KEY, logTitle text, logContent text, logType integer, logTime real)", TABLE_MONITOR_LOG]
 
+NSTimeInterval kXCMonitorLogExpiredTime = 2 * 24 * 60 * 60;
+NSString *const kXCMointorLogDBName = @"fmdb_file";
+
 // 如果用户没有提供completion group，则使用自定义的completion group
 static dispatch_group_t monitor_database_completion_group() {
     static dispatch_group_t xc_monitor_database_completion_group;
@@ -68,7 +71,8 @@ static dispatch_group_t monitor_database_completion_group() {
     if (![self.database open]) {
         NSLog(@"打开数据库失败❌!");
     } else {
-        // 清理数据库预留(某种情况下可能需要)
+        // 清理过期数据
+        [self deleteMonitorLogWithExpiredTime:kXCMonitorLogExpiredTime completionHandler:nil];
         
         // 创建表
         __weak typeof(self) weakSelf = self;
@@ -102,7 +106,7 @@ static dispatch_group_t monitor_database_completion_group() {
         [[NSFileManager defaultManager] createDirectoryAtPath:logDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
     }
     
-    NSString *dbPath = [logDirectory stringByAppendingPathComponent:@"fmdb_file"];
+    NSString *dbPath = [logDirectory stringByAppendingPathComponent:kXCMointorLogDBName];
     return dbPath;
 }
 
@@ -160,6 +164,22 @@ static dispatch_group_t monitor_database_completion_group() {
             }
         }
         
+    }];
+}
+
+- (void)deleteMonitorLogWithExpiredTime:(NSTimeInterval)expireTime completionHandler:(void (^)(BOOL))completionHandler {
+    __weak typeof(self) weakSelf = self;
+    [self.databaseQueue inDatabase:^(FMDatabase * _Nonnull db) {
+        __strong typeof(weakSelf) self = weakSelf;
+        
+        NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+        NSString *sql = [NSString stringWithFormat:@"DELETE FROM %@ WHERE (%f - logTime) > %f", TABLE_MONITOR_LOG, now, expireTime];
+        BOOL result = [self.database executeUpdate:sql];
+        if (completionHandler) {
+            dispatch_group_async(self.completionGroup ?: monitor_database_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                completionHandler(result);
+            });
+        }
     }];
 }
 
