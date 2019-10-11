@@ -16,7 +16,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXPORT NSString *const XCActionEventViewCellIdentifier;
 
+@class XCActionTraceModel;
+@protocol XCActionEventViewCellDelegate;
+
 @interface XCActionEventViewCell : UITableViewCell
+
+@property (nonatomic, strong) XCActionTraceModel *actionTraceModel;
+@property (nonatomic, weak) id<XCActionEventViewCellDelegate> delegate;
+
+@end
+
+@protocol XCActionEventViewCellDelegate <NSObject>
+
+- (void)xc_actionEventCellDidTappedDetail:(XCActionEventViewCell *)cell;
 
 @end
 
