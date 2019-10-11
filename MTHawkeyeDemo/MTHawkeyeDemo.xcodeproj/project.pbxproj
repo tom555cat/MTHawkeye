@@ -710,6 +710,7 @@
 				20DC16921ECDAAD500694EB9 /* Sources */,
 				20DC16931ECDAAD500694EB9 /* Frameworks */,
 				20DC16941ECDAAD500694EB9 /* Resources */,
+				FEB8550A6C21C38246E31FBA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -728,6 +729,7 @@
 				20DC16AB1ECDAAD500694EB9 /* Sources */,
 				20DC16AC1ECDAAD500694EB9 /* Frameworks */,
 				20DC16AD1ECDAAD500694EB9 /* Resources */,
+				D4AF5946F3DB7A3B8E6FF48B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -850,6 +852,50 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D4AF5946F3DB7A3B8E6FF48B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MTHawkeyeDemo-MTHawkeyeDemoTests/Pods-MTHawkeyeDemo-MTHawkeyeDemoTests-resources.sh",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MTHawkeyeDemo-MTHawkeyeDemoTests/Pods-MTHawkeyeDemo-MTHawkeyeDemoTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FEB8550A6C21C38246E31FBA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MTHawkeyeDemo/Pods-MTHawkeyeDemo-resources.sh",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MTHawkeyeDemo/Pods-MTHawkeyeDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

@@ -27,6 +27,8 @@ PODS:
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
   - GYHttpMock (1.0.1)
+  - Masonry (1.1.0)
+  - MJRefresh (3.2.0)
   - MTAppenderFile (0.4.3)
   - MTGLDebug (3.1.1):
     - fishhook (~> 0.2)
@@ -234,6 +236,8 @@ PODS:
   - MTHawkeye/XCActionTracePlugins (0.12.1):
     - MTHawkeye/Core
   - MTHawkeye/XCUI (0.12.1):
+    - Masonry (~> 1.1.0)
+    - MJRefresh (~> 3.2.0)
     - MTHawkeye/Core
     - MTHawkeye/NetworkPlugins
 
@@ -260,6 +264,8 @@ SPEC REPOS:
     - FLEX
     - FMDB
     - GYHttpMock
+    - Masonry
+    - MJRefresh
     - MTAppenderFile
     - MTGLDebug
 
@@ -276,9 +282,11 @@ SPEC CHECKSUMS:
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GYHttpMock: ad08e55ce8bde4e7f7b4d0cbc79ff23c1311658b
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MJRefresh: ed450d6eb9d3346a2cb033ab7eb6de090aeef437
   MTAppenderFile: c7db8f33a8140ee2275a6200305fd11e609fae33
   MTGLDebug: a65833811c1e8b84b2100dfb6b41c29c029254d6
-  MTHawkeye: be3fd883e3a2853d0f2e021a5c530f9f3b820eac
+  MTHawkeye: c95e0d5690ea3645d61e33afaa6b6fc7e324d09d
 
 PODFILE CHECKSUM: d38354cf1ef618c2dd09b7228bb0c995f7d7c949
 
