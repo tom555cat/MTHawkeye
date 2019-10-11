@@ -21,7 +21,7 @@
 @interface XCMonitorViewModel ()
 
 //@property (nonatomic, copy) NSArray<MTHNetworkTransaction *> *networkTransactions;
-@property (nonatomic, copy) NSArray<XCMonitorLogModel *> *logModels;
+@property (nonatomic, strong) NSMutableArray<XCMonitorLogModel *> *logModels;
 
 @property (nonatomic, copy) NSArray<MTHNetworkTransaction *> *filteredNetworkTransactions;
 
@@ -34,8 +34,7 @@
 
 //----------------------------------
 
-// 当前最后一个日志id
-@property (nonatomic, assign) NSUInteger lastLogID;
+@property (nonatomic, assign) BOOL isLoading;
 
 @end
 
@@ -46,39 +45,42 @@
         _requestIndexFocusOnCurrently = -1;
         _maxFollowingWhenFocusNotResponse = 10;
         _advicesDict = @{}.mutableCopy;
+        _logModels = [NSMutableArray array];
+        _reachEnd = YES;
+        _isLoading = NO;
     }
     return self;
 }
 
-- (void)setLogModels:(NSArray<XCMonitorLogModel *> *)logModels {
-    _logModels = [logModels copy];
-    
-#warning 考虑新增记录
+- (void)refreshLogModelsWithCompletion:(void (^)(void))completion {
+    [self loadLogModelsWithIndex:0 withCompletion:completion];
 }
 
-//- (void)setNetworkTransactions:(NSArray<MTHNetworkTransaction *> *)networkTransactions {
-//    NSInteger preCount = self.networkTransactions.count;
-//    _networkTransactions = networkTransactions;
-//
-//    // 新增记录，不用调整其他属性
-//    if (preCount >= networkTransactions.count) {
-//        if (preCount < self.requestIndexFocusOnCurrently) {
-//            self.requestIndexFocusOnCurrently = -1;
-//            self.currentOnViewIndexArray = @[];
-//        } else {
-//            [self focusOnTransactionWithRequestIndex:self.requestIndexFocusOnCurrently];
-//        }
-//    }
-//}
+- (void)loadMoreLogModelsWithCompletion:(void (^)(void))completion {
+    [self loadLogModelsWithIndex:self.logModels.count withCompletion:completion];
+}
 
-- (void)loadLogsWithCompletion:(void (^)(void))completion {
+- (void)loadLogModelsWithIndex:(NSInteger)index withCompletion:(void (^)(void))completion {
+    if (self.isLoading) {
+        return;
+    }
+    
+    self.isLoading = YES;
+    
     __weak typeof(self) weakSelf = self;
-    [[XCNetworkMonitorRecordsDBStorage shared] readNetworkTransactionsWithCount:20 sinceLogID:self.lastLogID withCompletion:^(NSArray<XCMonitorLogModel *> * _Nonnull logs) {
+    [[XCNetworkMonitorRecordsDBStorage shared] readNetworkTransactionsWithCount:20 index:index withCompletion:^(NSArray<XCMonitorLogModel *> * _Nonnull logs) {
         __strong typeof(weakSelf) self = weakSelf;
         if (!self) return;
         
-        //[self setNetworkTransactions:trans];
-        [self setLogModels:logs];
+        self.isLoading = NO;
+        
+        if (index <= 0) {
+            self.logModels = [logs mutableCopy];
+        } else {
+            [self.logModels addObjectsFromArray:logs];
+        }
+        
+        self.reachEnd = (logs.count == 0);
         
         if (completion) {
             completion();

@@ -33,8 +33,11 @@
 #import "UITableView+MTHEmptyTips.h"
 #import "XCActionEventViewCell.h"
 #import "XCActionTraceModel.h"
+#import "MJRefresh.h"
+#import "XCActionTraceDetailViewController.h"
 
 @interface XCMonitorViewController () <MTHNetworkHistoryViewCellDelegate,
+    XCActionEventViewCellDelegate,
     MTHNetworkMonitorFilterDelegate,
     MTHNetworkRecorderDelegate,
     UITableViewDataSource,
@@ -59,6 +62,9 @@
 @property (nonatomic, assign) BOOL loadingData;
 @property (nonatomic, assign) BOOL rowInsertInProgress;
 @property (nonatomic, strong) NSMutableArray<MTHNetworkTransaction *> *incomeTransactionsNew;
+
+@property (nonatomic, strong) MJRefreshHeader *mjHeader;
+@property (nonatomic, strong) MJRefreshFooter *mjFooter;
 
 @end
 
@@ -85,95 +91,135 @@
     self.viewModel = [[XCMonitorViewModel alloc] init];
     self.incomeTransactionsNew = @[].mutableCopy;
     
-    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.searchController.delegate = self;
-    self.searchController.searchResultsUpdater = self;
-    self.searchController.dimsBackgroundDuringPresentation = NO;
-    self.searchController.searchBar.delegate = self;
-    self.searchController.searchBar.placeholder = @"eg:\"d s f \" repeatedly failure request";
-    self.searchController.searchBar.searchBarStyle = UISearchBarStyleMinimal;
-    self.searchController.searchBar.showsSearchResultsButton = YES;
-    self.searchController.searchBar.backgroundColor = [UIColor colorWithRed:243.0 / 255 green:242.0 / 255 blue:242.0 / 255 alpha:1.0];
-    [self.view addSubview:self.searchController.searchBar];
+    // 关闭搜索和过滤入口
+//    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+//    self.searchController.hidesNavigationBarDuringPresentation = NO;
+//    self.searchController.delegate = self;
+//    self.searchController.searchResultsUpdater = self;
+//    self.searchController.dimsBackgroundDuringPresentation = NO;
+//    self.searchController.searchBar.delegate = self;
+//    self.searchController.searchBar.placeholder = @"eg:\"d s f \" repeatedly failure request";
+//    self.searchController.searchBar.searchBarStyle = UISearchBarStyleMinimal;
+//    self.searchController.searchBar.showsSearchResultsButton = YES;
+//    self.searchController.searchBar.backgroundColor = [UIColor colorWithRed:243.0 / 255 green:242.0 / 255 blue:242.0 / 255 alpha:1.0];
+//    [self.view addSubview:self.searchController.searchBar];
     self.definesPresentationContext = YES;
     
-    CGFloat top = self.searchController.searchBar.bounds.size.height;
-    CGFloat width = [UIScreen mainScreen].bounds.size.width;
-    CGFloat headerHeight = 140;
-    CGRect headerFrame = CGRectMake(0, top, width, headerHeight);
-    self.waterfallPlaceView = [[UIView alloc] initWithFrame:headerFrame];
-    self.waterfallPlaceView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:self.waterfallPlaceView];
+    // 关闭瀑布图入口
+//    CGFloat top = self.searchController.searchBar.bounds.size.height;
+//    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+//    CGFloat headerHeight = 140;
+//    CGRect headerFrame = CGRectMake(0, top, width, headerHeight);
+//    self.waterfallPlaceView = [[UIView alloc] initWithFrame:headerFrame];
+//    self.waterfallPlaceView.backgroundColor = [UIColor whiteColor];
+//    [self.view addSubview:self.waterfallPlaceView];
+//
+//    self.waterfallViewController = [[MTHNetworkWaterfallViewController alloc] initWithViewModel:self.viewModel];
+//    [self.waterfallViewController willMoveToParentViewController:self];
+//    [self addChildViewController:self.waterfallViewController];
+//    self.waterfallViewController.view.frame = self.waterfallPlaceView.bounds;
+//    [self.waterfallPlaceView addSubview:self.waterfallViewController.view];
+//    [self.waterfallViewController didMoveToParentViewController:self];
+//
+//    top += headerFrame.size.height;
     
-    self.waterfallViewController = [[MTHNetworkWaterfallViewController alloc] initWithViewModel:self.viewModel];
-    [self.waterfallViewController willMoveToParentViewController:self];
-    [self addChildViewController:self.waterfallViewController];
-    self.waterfallViewController.view.frame = self.waterfallPlaceView.bounds;
-    [self.waterfallPlaceView addSubview:self.waterfallViewController.view];
-    [self.waterfallViewController didMoveToParentViewController:self];
-    
-    top += headerFrame.size.height;
-    
-    CGFloat listHeight = self.view.bounds.size.height - top - headerHeight;
-    CGRect listFrame = CGRectMake(0, top, width, listHeight);
+//    CGFloat listHeight = self.view.bounds.size.height - top - headerHeight;
+    CGRect listFrame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     self.historyTableView = [[UITableView alloc] initWithFrame:listFrame style:UITableViewStylePlain];
     self.historyTableView.delegate = self;
     self.historyTableView.dataSource = self;
     
     [self.view addSubview:self.historyTableView];
     
-    [[MTHNetworkRecorder defaultRecorder] addDelegate:self];
+    // 不作为MTHNetworkRecorder的代理
+    //[[MTHNetworkRecorder defaultRecorder] addDelegate:self];
     
-    [self loadLogModels];
+    [self refreshLogModels];
     
-    //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolsBtnTapped)];
+    self.historyTableView.mj_header = [MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshLogModels)];
+    self.historyTableView.mj_footer = [MJRefreshAutoFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreLogModels)];
 }
 
-- (void)loadLogModels {
-    if (!self.headerLabel) {
-        self.headerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.view.frame.size.width - 20, 30)];
-    }
-    self.headerLabel.text = @"Loading ...";
-    self.loadingData = YES;
-    
-    __weak __typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-        [weakSelf.viewModel loadLogsWithCompletion:^{
-            dispatch_async(dispatch_get_main_queue(), ^(void) {
-                [weakSelf.historyTableView reloadData];
-                weakSelf.loadingData = NO;
-                
-#warning 等待网络聚焦功能完善之后开始
-                self.headerLabel.text = @"";
-            });
-        }];
+- (void)refreshLogModels {
+    __weak typeof(self) weakSelf = self;
+    [self.viewModel refreshLogModelsWithCompletion:^{
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) return;
         
-        // 侦测网络请求中的可改进项
-//        dispatch_async(dispatch_get_main_queue(), ^(void) {
-//            [weakSelf focusOnFirstRowIfPossible];
-//
-//            [weakSelf reloadHistoryTableView];
-//
-//            NSArray *transactions = self.searchController.isActive ? self.viewModel.filteredNetworkTransactions : self.viewModel.logModels;
-//            NSInteger totalRequest = 0;
-//            NSInteger totalResponse = 0;
-//            for (MTHNetworkTransaction *transaction in transactions) {
-//                totalRequest += transaction.requestLength;
-//                totalResponse += transaction.responseLength;
-//            }
-//            NSInteger total = totalRequest + totalResponse;
-//
-//            self.headerLabel.text = [NSString stringWithFormat:@"⇅ %@, ↑ %@, ↓ %@",
-//                                     [NSByteCountFormatter stringFromByteCount:total
-//                                                                    countStyle:NSByteCountFormatterCountStyleBinary],
-//                                     [NSByteCountFormatter stringFromByteCount:totalRequest
-//                                                                    countStyle:NSByteCountFormatterCountStyleBinary],
-//                                     [NSByteCountFormatter stringFromByteCount:totalResponse
-//                                                                    countStyle:NSByteCountFormatterCountStyleBinary]];
-//        });
+        [self loadDataComplete];
+        [self.historyTableView.mj_header endRefreshing];
+    }];
+}
+
+- (void)loadMoreLogModels {
+    if (self.viewModel.reachEnd) {
+        return;
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    [self.viewModel loadMoreLogModelsWithCompletion:^{
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) return;
+        
+        [self loadDataComplete];
+        [self.historyTableView.mj_footer endRefreshing];
+    }];
+}
+
+- (void)loadDataComplete {
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [self.historyTableView reloadData];
+        self.loadingData = NO;
+        
+#warning 等待网络聚焦功能完善之后开始
+        self.headerLabel.text = @"";
     });
 }
+
+//- (void)loadLogModels {
+//    if (!self.headerLabel) {
+//        self.headerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, self.view.frame.size.width - 20, 30)];
+//    }
+//    self.headerLabel.text = @"Loading ...";
+//    self.loadingData = YES;
+//
+//    __weak __typeof(self) weakSelf = self;
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+//        [weakSelf.viewModel loadLogsWithCompletion:^{
+//            dispatch_async(dispatch_get_main_queue(), ^(void) {
+//                [weakSelf.historyTableView reloadData];
+//                weakSelf.loadingData = NO;
+//
+//#warning 等待网络聚焦功能完善之后开始
+//                self.headerLabel.text = @"";
+//            });
+//        }];
+//
+//        // 侦测网络请求中的可改进项
+////        dispatch_async(dispatch_get_main_queue(), ^(void) {
+////            [weakSelf focusOnFirstRowIfPossible];
+////
+////            [weakSelf reloadHistoryTableView];
+////
+////            NSArray *transactions = self.searchController.isActive ? self.viewModel.filteredNetworkTransactions : self.viewModel.logModels;
+////            NSInteger totalRequest = 0;
+////            NSInteger totalResponse = 0;
+////            for (MTHNetworkTransaction *transaction in transactions) {
+////                totalRequest += transaction.requestLength;
+////                totalResponse += transaction.responseLength;
+////            }
+////            NSInteger total = totalRequest + totalResponse;
+////
+////            self.headerLabel.text = [NSString stringWithFormat:@"⇅ %@, ↑ %@, ↓ %@",
+////                                     [NSByteCountFormatter stringFromByteCount:total
+////                                                                    countStyle:NSByteCountFormatterCountStyleBinary],
+////                                     [NSByteCountFormatter stringFromByteCount:totalRequest
+////                                                                    countStyle:NSByteCountFormatterCountStyleBinary],
+////                                     [NSByteCountFormatter stringFromByteCount:totalResponse
+////                                                                    countStyle:NSByteCountFormatterCountStyleBinary]];
+////        });
+//    });
+//}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -216,7 +262,8 @@
     [self.waterfallViewController updateContentInset];
     
     top += waterfallFrame.size.height;
-    CGRect listFrame = CGRectMake(0, top, self.view.bounds.size.width, self.view.bounds.size.height - top);
+#warning 暂时将所有记录放大至全屏
+    CGRect listFrame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
     self.historyTableView.frame = listFrame;
     
     CGFloat left = 10.f;
@@ -239,84 +286,86 @@
     return cur.topLayoutGuide;
 }
 
+#warning 关闭MTHNetworkRecorder代理，只从数据库中读取
 // MARK: - MTHNetworkRecorder
 
-- (void)recorderWantCacheNewTransaction:(MTHNetworkTransaction *)transaction {
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-        @synchronized(self.incomeTransactionsNew) {
-            [self.incomeTransactionsNew insertObject:transaction atIndex:0];
-        }
-        
-        [self tryUpdateTransactions];
-    });
-}
 
-- (void)tryUpdateTransactions {
-    if (self.loadingData || self.rowInsertInProgress || self.searchController.isActive) {
-        return;
-    }
-    
-    NSInteger addedRowCount = 0;
-    @synchronized(self.incomeTransactionsNew) {
-        if (self.incomeTransactionsNew.count == 0)
-            return;
-        
-        addedRowCount = [self.incomeTransactionsNew count];
-        [self.viewModel incomeNewTransactions:[self.incomeTransactionsNew copy]
-                            inspectCompletion:^{
-                                // simply ignore to update advices tips.
-                            }];
-        [self.incomeTransactionsNew removeAllObjects];
-    }
-    
-    if (addedRowCount != 0 && !self.viewModel.isPresentingSearch) {
-        // 头部插入了新的请求记录，更新焦点
-        NSInteger fixFocusIndex = self.viewModel.requestIndexFocusOnCurrently;
-        [self.viewModel focusOnTransactionWithRequestIndex:fixFocusIndex];
-        [self.waterfallViewController reloadData];
-        
-        // insert animation if we're at the top.
-        if (self.historyTableView.contentOffset.y <= 0.f) {
-            [CATransaction begin];
-            
-            self.rowInsertInProgress = YES;
-            [CATransaction setCompletionBlock:^{
-                self.rowInsertInProgress = NO;
-                [self tryUpdateTransactions];
-            }];
-            
-            NSMutableArray *indexPathsToReload = [NSMutableArray array];
-            for (NSInteger row = 0; row < addedRowCount; row++) {
-                [indexPathsToReload addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-            }
-            [self.historyTableView insertRowsAtIndexPaths:indexPathsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
-            
-            [CATransaction commit];
-        } else {
-            // Maintain the user's position if they've scrolled down.
-            CGSize existingContentSize = self.historyTableView.contentSize;
-            [self.historyTableView reloadData];
-            CGFloat contentHeightChange = self.historyTableView.contentSize.height - existingContentSize.height;
-            self.historyTableView.contentOffset = CGPointMake(self.historyTableView.contentOffset.x, self.historyTableView.contentOffset.y + contentHeightChange);
-        }
-    }
-}
-
-- (void)recorderWantCacheTransactionAsUpdated:(MTHNetworkTransaction *)transaction currentState:(MTHNetworkTransactionState)state {
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-        for (MTHNetworkHistoryViewCell *cell in [self.historyTableView visibleCells]) {
-            if ([cell.transaction isEqual:transaction]) {
-                [cell setNeedsLayout];
-                
-                if (transaction.transactionState == MTHNetworkTransactionStateFailed || transaction.transactionState == MTHNetworkTransactionStateFinished) {
-                    [self.viewModel focusOnTransactionWithRequestIndex:self.viewModel.requestIndexFocusOnCurrently];
-                    [self.waterfallViewController reloadData];
-                }
-                break;
-            }
-        }
-    });
-}
+//- (void)recorderWantCacheNewTransaction:(MTHNetworkTransaction *)transaction {
+//    dispatch_async(dispatch_get_main_queue(), ^(void) {
+//        @synchronized(self.incomeTransactionsNew) {
+//            [self.incomeTransactionsNew insertObject:transaction atIndex:0];
+//        }
+//
+//        [self tryUpdateTransactions];
+//    });
+//}
+//
+//- (void)tryUpdateTransactions {
+//    if (self.loadingData || self.rowInsertInProgress || self.searchController.isActive) {
+//        return;
+//    }
+//
+//    NSInteger addedRowCount = 0;
+//    @synchronized(self.incomeTransactionsNew) {
+//        if (self.incomeTransactionsNew.count == 0)
+//            return;
+//
+//        addedRowCount = [self.incomeTransactionsNew count];
+//        [self.viewModel incomeNewTransactions:[self.incomeTransactionsNew copy]
+//                            inspectCompletion:^{
+//                                // simply ignore to update advices tips.
+//                            }];
+//        [self.incomeTransactionsNew removeAllObjects];
+//    }
+//
+//    if (addedRowCount != 0 && !self.viewModel.isPresentingSearch) {
+//        // 头部插入了新的请求记录，更新焦点
+//        NSInteger fixFocusIndex = self.viewModel.requestIndexFocusOnCurrently;
+//        [self.viewModel focusOnTransactionWithRequestIndex:fixFocusIndex];
+//        [self.waterfallViewController reloadData];
+//
+//        // insert animation if we're at the top.
+//        if (self.historyTableView.contentOffset.y <= 0.f) {
+//            [CATransaction begin];
+//
+//            self.rowInsertInProgress = YES;
+//            [CATransaction setCompletionBlock:^{
+//                self.rowInsertInProgress = NO;
+//                [self tryUpdateTransactions];
+//            }];
+//
+//            NSMutableArray *indexPathsToReload = [NSMutableArray array];
+//            for (NSInteger row = 0; row < addedRowCount; row++) {
+//                [indexPathsToReload addObject:[NSIndexPath indexPathForRow:row inSection:0]];
+//            }
+//            [self.historyTableView insertRowsAtIndexPaths:indexPathsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
+//
+//            [CATransaction commit];
+//        } else {
+//            // Maintain the user's position if they've scrolled down.
+//            CGSize existingContentSize = self.historyTableView.contentSize;
+//            [self.historyTableView reloadData];
+//            CGFloat contentHeightChange = self.historyTableView.contentSize.height - existingContentSize.height;
+//            self.historyTableView.contentOffset = CGPointMake(self.historyTableView.contentOffset.x, self.historyTableView.contentOffset.y + contentHeightChange);
+//        }
+//    }
+//}
+//
+//- (void)recorderWantCacheTransactionAsUpdated:(MTHNetworkTransaction *)transaction currentState:(MTHNetworkTransactionState)state {
+//    dispatch_async(dispatch_get_main_queue(), ^(void) {
+//        for (MTHNetworkHistoryViewCell *cell in [self.historyTableView visibleCells]) {
+//            if ([cell.transaction isEqual:transaction]) {
+//                [cell setNeedsLayout];
+//
+//                if (transaction.transactionState == MTHNetworkTransactionStateFailed || transaction.transactionState == MTHNetworkTransactionStateFinished) {
+//                    [self.viewModel focusOnTransactionWithRequestIndex:self.viewModel.requestIndexFocusOnCurrently];
+//                    [self.waterfallViewController reloadData];
+//                }
+//                break;
+//            }
+//        }
+//    });
+//}
 
 // MARK: -
 - (void)focusOnFirstRowIfPossible {
@@ -449,6 +498,7 @@
     XCActionEventViewCell *cell = [tableView dequeueReusableCellWithIdentifier:XCActionEventViewCellIdentifier];
     if (cell == nil) {
         cell = [[XCActionEventViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:XCActionEventViewCellIdentifier];
+        cell.delegate = self;
     }
     
     // 将LogModel转化为ActionTraceModel
@@ -457,7 +507,7 @@
         return cell;
     }
     
-    cell.textLabel.text = actionTraceModel.actionTitle;
+    cell.actionTraceModel = actionTraceModel;
     
     return cell;
 }
@@ -504,6 +554,14 @@
     MTHNetworkTransactionDetailTableViewController *detailViewController = [[MTHNetworkTransactionDetailTableViewController alloc] init];
     detailViewController.transaction = cell.transaction;
     detailViewController.advices = [self.viewModel advicesForTransaction:cell.transaction];
+    [self.navigationController pushViewController:detailViewController animated:YES];
+}
+
+// MARK: XCActionEventViewCellDelegate
+
+- (void)xc_actionEventCellDidTappedDetail:(XCActionEventViewCell *)cell {
+    XCActionTraceDetailViewController *detailViewController = [[XCActionTraceDetailViewController alloc] init];
+    detailViewController.actionTraceModel = cell.actionTraceModel;
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 

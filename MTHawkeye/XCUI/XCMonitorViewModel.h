@@ -37,9 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL isPresentingSearch;
 
+// 是否没有更多数据
+@property (nonatomic, assign) BOOL reachEnd;
+
 // 当前显示的网络请求记录列表
 //@property (nonatomic, readonly) NSArray<MTHNetworkTransaction *> *networkTransactions;
-@property (nonatomic, readonly) NSArray<XCMonitorLogModel *> *logModels;
+@property (nonatomic, readonly) NSMutableArray<XCMonitorLogModel *> *logModels;
 
 // 过滤的网络请求记录列表
 @property (nonatomic, readonly) NSArray<MTHNetworkTransaction *> *filteredNetworkTransactions;
@@ -74,7 +77,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 // transactions update
 //- (void)loadTransactionsWithInspectComoletion:(void (^)(void))inspectCompetion;
-- (void)loadLogsWithCompletion:(void (^)(void))completion;
+//- (void)loadLogsWithCompletion:(void (^)(void))completion;
+
+// 刷新日志记录
+- (void)refreshLogModelsWithCompletion:(void (^)(void))completion;
+// 加载更多日志记录
+- (void)loadMoreLogModelsWithCompletion:(void (^)(void))completion;
 #warning 先关闭侦听改进
 //- (void)loadLogsWithInspectCompletion:(void (^)(void))inspectCompetion;
 - (void)incomeNewTransactions:(NSArray<MTHNetworkTransaction *> *)transactions inspectCompletion:(void (^)(void))inspectCompetion;
